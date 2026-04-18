@@ -15,13 +15,17 @@ and academic performance.
 ---
 ## 📸 Project Demo
 
-<p align="center">
-  <b>Home UI</b><br>
-  <img src="pic1.png" width="400"/><br><br>
+<table align="center">
+  <tr>
+    <td align="center"><b>Home UI</b></td>
+    <td align="center"><b>Expected Outcome</b></td>
+  </tr>
+  <tr>
+    <td><img src="pic1.png" width="400" height="250"/></td>
+    <td><img src="pic2.png" width="400" height="250"/></td>
+  </tr>
+</table>
 
-  <b>Prediction Output</b><br>
-  <img src="pic2.png" width="400"/>
-</p>
 ---
 
 ## 🎯 Objective

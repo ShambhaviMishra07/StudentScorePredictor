@@ -4,6 +4,7 @@
 ![ML](https://img.shields.io/badge/ML-Scikit--learn-orange)
 ![Status](https://img.shields.io/badge/Status-Complete-green)
 
+
 ---
 
 ## 📌 Overview
@@ -11,6 +12,14 @@ A Machine Learning project that predicts a student's final
 exam score based on their attendance, study habits,
 and academic performance.
 
+---
+## 📸 Project Demo
+
+### Home UI
+![Home UI](pic1.png)
+
+### Prediction Output
+![Prediction Output](pic2.png)
 ---
 
 ## 🎯 Objective

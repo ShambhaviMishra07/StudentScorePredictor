@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        /* ---- Header ---- */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header h1 span {
+            color: #e94560;
+        }
+
+        .header p {
+            margin-top: 8px;
+            color: #a8b2c8;
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ---- Main Card ---- */
+        .main-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .section-title {
+            color: #e94560;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(233,69,96,0.3);
+        }
+
+        /* ---- Form ---- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #a8b2c8;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        label span {
+            color: #e94560;
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
+
+        input[type="number"] {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 13px 16px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            width: 100%;
+        }
+
+        input[type="number"]:focus {
+            border-color: #e94560;
+            background: rgba(233,69,96,0.08);
+            box-shadow: 0 0 0 3px rgba(233,69,96,0.15);
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+
+        /* ---- Slider ---- */
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #e94560;
+            height: 6px;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            background: #e94560;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        /* ---- Button ---- */
+        .predict-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e94560, #c62a47);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233,69,96,0.4);
+        }
+
+        .predict-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ---- Result Card ---- */
+        .result-card {
+            margin-top: 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 35px;
+            width: 100%;
+            max-width: 650px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Score circle */
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .score-circle.pass {
+            background: radial-gradient(circle, rgba(46,213,115,0.2), rgba(46,213,115,0.05));
+            border: 4px solid #2ed573;
+            box-shadow: 0 0 30px rgba(46,213,115,0.3);
+        }
+
+        .score-circle.fail {
+            background: radial-gradient(circle, rgba(255,71,87,0.2), rgba(255,71,87,0.05));
+            border: 4px solid #ff4757;
+            box-shadow: 0 0 30px rgba(255,71,87,0.3);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            color: white;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: #a8b2c8;
+            margin-top: 4px;
+        }
+
+        /* Result grid */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .result-item .r-label {
+            color: #a8b2c8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-item .r-value {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .result-item .r-value.pass  { color: #2ed573; }
+        .result-item .r-value.fail  { color: #ff4757; }
+        .result-item .r-value.grade { color: #ffa502; }
+
+        /* Remark box */
+        .remark-box {
+            background: rgba(233,69,96,0.1);
+            border: 1px solid rgba(233,69,96,0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Input summary */
+        .input-summary {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .summary-item {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .summary-item .s-label {
+            color: #a8b2c8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .summary-item .s-value {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* Reset button */
+        .reset-btn {
+            width: 100%;
+            padding: 13px;
+            background: transparent;
+            color: #a8b2c8;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        /* Error */
+        .error-box {
+            background: rgba(255,71,87,0.1);
+            border: 1px solid rgba(255,71,87,0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: #ff4757;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            color: #a8b2c8;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🎓 Student <span>Performance</span> Predictor</h1>
+        <p>Machine Learning powered prediction system</p>
+        <span class="badge">Random Forest Model • 92%+ Accuracy</span>
+    </div>
+
+    <!-- Input Form Card -->
+    <div class="main-card">
+        <div class="section-title">📋 Enter Student Details</div>
+
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+
+                <!-- Attendance -->
+                <div class="form-group">
+                    <label>Attendance <span>[0 - 100%]</span></label>
+                    <input type="number" name="attendance"
+                           placeholder="e.g. 85"
+                           min="0" max="100" step="0.1"
+                           value="{{ attendance if attendance }}"
+                           required>
+                </div>
+
+                <!-- Internal Marks -->
+                <div class="form-group">
+                    <label>Internal Marks <span>[0 - 100]</span></label>
+                    <input type="number" name="internal_marks"
+                           placeholder="e.g. 78"
+                           min="0" max="100" step="0.1"
+                           value="{{ internal_marks if internal_marks }}"
+                           required>
+                </div>
+
+                <!-- Assignments -->
+                <div class="form-group">
+                    <label>Assignment Score <span>[0 - 100]</span></label>
+                    <input type="number" name="assignments"
+                           placeholder="e.g. 82"
+                           min="0" max="100" step="0.1"
+                           value="{{ assignments if assignments }}"
+                           required>
+                </div>
+
+                <!-- Study Hours -->
+                <div class="form-group">
+                    <label>Study Hours/Day <span>[1 - 10]</span></label>
+                    <input type="number" name="study_hours"
+                           placeholder="e.g. 6"
+                           min="1" max="10" step="0.5"
+                           value="{{ study_hours if study_hours }}"
+                           required>
+                </div>
+
+                <!-- Sleep Hours - Slider -->
+                <div class="form-group full-width">
+                    <label>Sleep Hours/Day <span>[4 - 10]</span></label>
+                    <div class="slider-row">
+                        <input type="range" name="sleep_hours"
+                               min="4" max="10" step="0.5"
+                               value="{{ sleep_hours if sleep_hours else 7 }}"
+                               oninput="document.getElementById('sleepVal').textContent=this.value">
+                        <div class="slider-value">
+                            <span id="sleepVal">
+                                {{ sleep_hours if sleep_hours else 7 }}
+                            </span> hrs
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit" class="predict-btn">
+                🔮 Predict Performance
+            </button>
+        </form>
+
+        {% if error %}
+        <div class="error-box">⚠️ {{ error }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Result Card -->
+    {% if show_result %}
+    <div class="result-card">
+        <div class="section-title">📊 Prediction Result</div>
+
+        <!-- Score Circle -->
+        <div class="score-circle {{ 'pass' if status == 'PASS' else 'fail' }}">
+            <div class="score-number">{{ prediction }}</div>
+            <div class="score-label">out of 100</div>
+        </div>
+
+        <!-- Grade / Status / Score -->
+        <div class="result-grid">
+            <div class="result-item">
+                <div class="r-label">Grade</div>
+                <div class="r-value grade">{{ grade }}</div>
+            </div>
+            <div class="result-item">
+                <div class="r-label">Status</div>
+                <div class="r-value {{ 'pass' if status == 'PASS' else 'fail' }}">
+                    {{ status }}
+                </div>
+            </div>
+            <div class="result-item">
+                <div class="r-label">Score</div>
+                <div class="r-value">{{ prediction }}%</div>
+            </div>
+        </div>
+
+        <!-- Remark -->
+        <div class="remark-box">{{ remark }}</div>
+
+        <!-- Input Summary -->
+        <div class="section-title" style="margin-bottom:15px">
+            📌 Submitted Details
+        </div>
+        <div class="input-summary">
+            <div class="summary-item">
+                <div class="s-label">Attendance</div>
+                <div class="s-value">{{ attendance }}%</div>
+            </div>
+            <div class="summary-item">
+                <div class="s-label">Study Hrs</div>
+                <div class="s-value">{{ study_hours }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="s-label">Sleep Hrs</div>
+                <div class="s-value">{{ sleep_hours }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="s-label">Internal</div>
+                <div class="s-value">{{ internal_marks }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="s-label">Assignment</div>
+                <div class="s-value">{{ assignments }}</div>
+            </div>
+        </div>
+
+        <button class="reset-btn" onclick="window.location.href='/'">
+            🔄 Predict Another Student
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        🎓 Student Performance Prediction System &nbsp;|&nbsp;
+        Python + Flask + Machine Learning
+    </div>
+
+</body>
+</html>

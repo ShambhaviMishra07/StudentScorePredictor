@@ -21,8 +21,8 @@ and academic performance.
     <td align="center"><b>Expected Outcome</b></td>
   </tr>
   <tr>
-    <td><img src="pic1.png" width="400" height="250"/></td>
-    <td><img src="pic2.png" width="400" height="250"/></td>
+   <td><img src="home-ui.png" width="400" height="250"/></td>
+   <td><img src="expected-outcome.png" width="400" height="250"/></td>
   </tr>
 </table>
 
